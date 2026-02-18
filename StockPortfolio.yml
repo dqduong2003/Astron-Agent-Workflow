@@ -1,0 +1,901 @@
+flowMeta:
+  name: Stock Portfolio
+  description: An AI Agent That Monitors My Stock Portfolio 24/7
+  avatarIcon: https://oss-beijing-m8.openstorage.cn/SparkBotProd/icon/common/emojiitem_00_10@2x.png
+  avatarColor: '#FFEAD5'
+  advancedConfig: '{"prologue":{"enabled":true,"inputExample":["","",""]},"textToSpeech":{"enabled":true,"vcn_cn":"x5_lingxiaotang_flow","vcn_en":""}}'
+  dslVersion: v1
+flowData:
+  nodes:
+  - id: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    dragging: false
+    selected: false
+    width: 362
+    height: 82
+    position:
+      x: -1310.1543642105673
+      y: 601.2278055440819
+    positionAbsolute:
+      x: -1310.1543642105673
+      y: 601.2278055440819
+    type: custom
+    data:
+      allowInputReference: false
+      allowOutputReference: true
+      label: 开始
+      status: ''
+      nodeMeta:
+        aliasName: 开始节点
+        nodeType: 基础节点
+      inputs: [
+        ]
+      outputs:
+      - id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+        name: AGENT_USER_INPUT
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: 用户本轮对话输入内容
+        required: true
+        deleteDisabled: true
+      nodeParam:
+        setAnswerContentErrMsg: 输出中变量名校验不通过,自动生成JSON失败
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/start-node-icon.png
+      description: 工作流的开启节点，用于定义流程调用所需的业务变量信息。
+      updatable: false
+  - id: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    dragging: false
+    selected: false
+    width: 362
+    height: 82
+    position:
+      x: 1748.0584645663207
+      y: 631.9886566499364
+    positionAbsolute:
+      x: 1748.0584645663207
+      y: 631.9886566499364
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: 结束
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 结束节点
+        nodeType: 基础节点
+      inputs:
+      - id: 3e8a565f-43a3-492a-9ccc-a7d8d471652b
+        name: answer
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5228555a-ae6b-40f3-8e0c-4c47f1739767
+              nodeId: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+      outputs: [
+        ]
+      nodeParam:
+        template: '{{answer}}'
+        streamOutput: true
+        outputMode: 1
+        templateErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/end-node-icon.png
+      description: 工作流的结束节点，用于输出工作流运行后的最终结果。
+      updatable: false
+  - id: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 608.1678404712068
+      y: 955.5704088614367
+    positionAbsolute:
+      x: 608.1678404712068
+      y: 955.5704088614367
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Assessor
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: 4b5ece4b-fb96-4778-86b2-26976fa5e9cf
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5d23ff47-c154-43e9-b4ce-416f13888841
+              nodeId: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+              name: content
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: d2650598-b83d-474b-94cf-0b1a44e76656
+        name: risk_assess
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a Corporate Risk Management Specialist. Analyze the provided text for systemic or company-specific risks.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Risk Categories:**
+             - **Regulatory:** Antitrust, lawsuits, government bans.
+             - **Leadership:** CEO departure, scandal, insider selling.
+             - **Market:** Macro headwinds (inflation, rates) specifically mentioned in the text.
+          2. **Risk Levels:**
+             - **Low:** Standard market volatility.
+             - **Medium:** Watch-list items (e.g., pending investigation).
+             - **High:** Material threat to business model (e.g., major product recall, DOJ lawsuit).
+          3. **No Risk Found:** If the input text contains no negative risk information, output "Low" and "None identified." DO NOT hallucinate risks.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "identified_risks": ["String", "String"],
+            "risk_level": "String (Low/Medium/High)",
+            "risk_explanation": "String (Brief explanation of the primary threat)"
+          }
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 1185.7407859875657
+      y: 631.6710659971304
+    positionAbsolute:
+      x: 1185.7407859875657
+      y: 631.6710659971304
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Action Synthesizer
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: 2b5d392b-b909-40e5-88c5-77819048e5f9
+        name: sentiment
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5aeacdbc-4e9e-4089-8220-44461612598b
+              nodeId: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+              name: sentiment_analysis
+            contentErrMsg: ''
+        fileType: ''
+      - id: a6f7153a-e28b-44b7-ab20-e3d9d39dd2c6
+        name: risk
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: d2650598-b83d-474b-94cf-0b1a44e76656
+              nodeId: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+              name: risk_assess
+            contentErrMsg: ''
+        fileType: ''
+      - id: 59333268-3976-4ddc-bdd4-c40a82df231b
+        name: fundamental
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: e4da56fb-4d21-4b09-937d-e2b7a767ab34
+              nodeId: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+              name: fundamental_analysis
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 5228555a-ae6b-40f3-8e0c-4c47f1739767
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: |-
+          Sentiment analysis: {{sentiment}},
+          Fundamental Analysis: {{fundamental}},
+          Risk assessor: {{risk}}
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a Portfolio Manager. You will receive JSON inputs from the Sentiment Analyzer, Fundamental Analyst, and Risk Assessor.
+
+          **DECISION LOGIC:**
+          1. **Synthesize:** Combine the scores.
+             - **Strong Buy:** High Sentiment (>7) + High Fundamentals (>70) + Low Risk.
+             - **Hold:** Mixed signals (e.g., Great Fundamentals but High Risk).
+             - **Sell:** Low Fundamentals (<40) OR Critical Risk.
+          2. **Risk Override:** If Risk Level is "High," the recommendation CANNOT be "Buy," regardless of how good the sentiment is. It must be "Hold" or "Sell."
+          3. **Confidence:** Assign High/Medium/Low confidence based on data consistency across all three agents.
+
+          **OUTPUT FORMAT:**
+          Produce a clean, professional Markdown report. Do not output JSON. Use the following structure:
+
+          ## 📊 Portfolio Report: [Ticker]
+
+          | Metric | Status |
+          | :--- | :--- |
+          | **Sentiment** | [Score]/10 ([Label]) |
+          | **Fundamentals** | [Score]/100 |
+          | **Risk Level** | [Level] |
+
+          ### 💡 Recommendation: **[BUY / HOLD / SELL]**
+          **Reasoning:** [2-3 sentences explaining the decision based on the synthesis of the three inputs.]
+
+          ---
+          * **Key News:** [Insert Key Phrases/Summary]
+          * **Risk Alert:** [Insert Risk Explanation if Risk is Medium or High]
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 589.7419873663101
+      y: 427.2726232327884
+    positionAbsolute:
+      x: 589.7419873663101
+      y: 427.2726232327884
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Sentiment Analyzer
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: ad82931a-8192-4448-af6a-54d7375638fb
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: fbc2ccfd-5bb0-44da-a856-1b396dc96146
+              nodeId: question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43
+              name: content
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 5aeacdbc-4e9e-4089-8220-44461612598b
+        name: sentiment_analysis
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        systemTemplate: |-
+          You are a Senior Financial Sentiment Analysis Expert. Analyze the provided news text for the given stock ticker.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Scoring Rubric (1-10):**
+             - 1-3: Bearish (Negative earnings, lawsuits, analyst downgrades).
+             - 4-6: Neutral (Standard updates, no major catalysts, mixed signals).
+             - 7-10: Bullish (Earnings beat, product breakthroughs, analyst upgrades).
+          2. **Context Weighting:** Give higher weight to concrete financial data (earnings, guidance) than to rumors or social media speculation.
+          3. **Urgency Definitions:**
+             - "Low": Routine news.
+             - "High": Market-moving event (e.g., CEO firing, earnings miss/beat).
+             - "Critical": Immediate trading halt or catastrophic risk.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "overall_sentiment_score": Number,
+            "sentiment_label": "String (Bullish/Bearish/Neutral)",
+            "key_phrases": ["String", "String"],
+            "urgency_flag": "String (Low/High/Critical)",
+            "reasoning_summary": "String (1 sentence explaining the score)"
+          }
+        llmIdErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        source: openai
+        extraParams:
+          temperature: 1
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 602.0021650981766
+      y: 703.2929900168696
+    positionAbsolute:
+      x: 602.0021650981766
+      y: 703.2929900168696
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Analyst
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: c0c9d051-7039-4513-8cd3-e102f3ef8d91
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: f3a0d1e7-06af-4979-b82b-0c54d4cbb334
+              nodeId: question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4
+              name: content
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: e4da56fb-4d21-4b09-937d-e2b7a767ab34
+        name: fundamental_analysis
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a CFA-level Fundamental Analysis Expert. Analyze the provided financial metrics.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Evaluation Logic:**
+             - **P/E Ratio:** Evaluate relative to the tech/sector average (e.g., >50 is high unless growth is >20%).
+             - **Revenue:** Look for YoY growth. Negative growth is a critical red flag.
+             - **Margins:** Higher is better; shrinking margins indicate competitive pressure.
+          2. **Scoring (1-100):**
+             - <40: Distressed (Declining revenue, high debt).
+             - 40-70: Stable but slow growth.
+             - 71-100: Exceptional (High growth, strong margins, defensible moat).
+          3. **Missing Data:** If specific benchmarks are not provided in the input, use general knowledge of the S&P 500 or Sector standards as the baseline.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "earnings_status": "String (Beat/Miss/Inline/Unknown)",
+            "pe_ratio": "String or Number",
+            "revenue_growth": "String",
+            "fundamental_score": Number,
+            "red_flags": ["String", "String"],
+            "strength_summary": "String (1 sentence on financial health)"
+          }
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43
+    dragging: false
+    selected: false
+    width: 362
+    height: 156
+    position:
+      x: -780.2503203258885
+      y: 563.8926267465201
+    positionAbsolute:
+      x: -780.2503203258885
+      y: 563.8926267465201
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: News Aggregator Input
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 问答节点
+        nodeType: 基础节点
+      inputs:
+      - id: 8f9018ae-e1c7-45bc-ae87-2fcb363ddf34
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+              nodeId: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+              name: AGENT_USER_INPUT
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 15286716-46b8-4462-8460-9f842d1d56c2
+        name: query
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: The question content of this node
+          default: ''
+        required: true
+      - id: fbc2ccfd-5bb0-44da-a856-1b396dc96146
+        name: content
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: User reply content
+          default: ''
+        required: true
+      nodeParam:
+        question: Please paste the most significant news headlines and article summaries
+          from the last 48 hours for your stock. Include a mix of financial sources
+          (Bloomberg, CNBC) and social sentiment (Reddit/X) if available.
+        timeout: 3
+        needReply: false
+        answerType: direct
+        directAnswer:
+          handleResponse: false
+          maxRetryCounts: 2
+        optionAnswer:
+        - id: option-one-of::05389a60-6d8b-4643-8518-46078665b389
+          name: A
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::8c67a999-bb71-4dce-8448-c4e3ddc0f625
+          name: B
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::4936b4be-e30d-4c2e-b46b-1acf5787b96e
+          name: default
+          type: 1
+          content: ''
+          content_type: string
+        url: wss://spark-api.xf-yun.com/v4.0/chat
+        domain: 4.0Ultra
+        appId: 680ab54f
+        maxTokens: 2048
+        temperature: 0.5
+        topK: 4
+        model: spark
+        llmId: 110
+        serviceId: bm4
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        questionErrMsg: ''
+        llmIdErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/SparkBot/test4/answer-new2.png
+      description: This node supports asking questions to the user, receiving user
+        responses, and outputting the reply content and extracted information
+      updatable: false
+  - id: question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4
+    dragging: false
+    selected: false
+    width: 362
+    height: 156
+    position:
+      x: -300.21972349476744
+      y: 588.5805837076508
+    positionAbsolute:
+      x: -300.21972349476744
+      y: 588.5805837076508
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Analyst Input
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 问答节点
+        nodeType: 基础节点
+      inputs:
+      - id: 9b515089-f4b0-4eda-8f10-62b77c097da8
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+              nodeId: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+              name: AGENT_USER_INPUT
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 11998aaa-5515-4e93-9f38-7bb428efd6bb
+        name: query
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: The question content of this node
+          default: ''
+        required: true
+      - id: f3a0d1e7-06af-4979-b82b-0c54d4cbb334
+        name: content
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: User reply content
+          default: ''
+        required: true
+      nodeParam:
+        question: |-
+          Please provide the current financial health metrics for your stock. Specifically, input the following for each stock:
+
+          Current P/E Ratio
+          Recent Revenue Growth (YoY)
+          Latest Earnings Result (Beat/Miss)
+          Any major debt concerns
+        timeout: 3
+        needReply: false
+        answerType: direct
+        directAnswer:
+          handleResponse: false
+          maxRetryCounts: 2
+        optionAnswer:
+        - id: option-one-of::42354efe-c4d7-446b-95c6-47bfd874eca0
+          name: A
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::5d320839-6dad-4a3b-b69b-37cd6aa097b5
+          name: B
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::7b9d078a-666a-468e-968d-a860df38fea8
+          name: default
+          type: 1
+          content: ''
+          content_type: string
+        url: wss://spark-api.xf-yun.com/v4.0/chat
+        domain: 4.0Ultra
+        appId: 680ab54f
+        maxTokens: 2048
+        temperature: 0.5
+        topK: 4
+        model: spark
+        llmId: 110
+        serviceId: bm4
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        questionErrMsg: ''
+        llmIdErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/SparkBot/test4/answer-new2.png
+      description: This node supports asking questions to the user, receiving user
+        responses, and outputting the reply content and extracted information
+      updatable: false
+  - id: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    dragging: false
+    selected: false
+    width: 362
+    height: 156
+    position:
+      x: 123.1113392535492
+      y: 577.1967264111007
+    positionAbsolute:
+      x: 123.1113392535492
+      y: 577.1967264111007
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Assessor Input
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 问答节点
+        nodeType: 基础节点
+      inputs:
+      - id: d2ebc8bd-63c0-47ce-923c-a52e23319993
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+              nodeId: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+              name: AGENT_USER_INPUT
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: c239cbbc-a140-4544-82a0-028228ed6df4
+        name: query
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: The question content of this node
+          default: ''
+        required: true
+      - id: 5d23ff47-c154-43e9-b4ce-416f13888841
+        name: content
+        nameErrMsg: ''
+        schema:
+          type: string
+          description: User reply content
+          default: ''
+        required: true
+      nodeParam:
+        question: |-
+          Are there any active systemic risks for yor stock that are not covered in standard earnings reports? Please list details regarding:
+
+          Regulatory investigations (e.g., antitrust)
+          Leadership/CEO controversy
+          Geopolitical or Supply Chain threats
+        timeout: 3
+        needReply: false
+        answerType: direct
+        directAnswer:
+          handleResponse: false
+          maxRetryCounts: 2
+        optionAnswer:
+        - id: option-one-of::184777fa-6d64-4e61-b717-1cf44dceb4dc
+          name: A
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::8631b7e7-7f88-4df4-9ba2-78d00396111f
+          name: B
+          type: 2
+          content: ''
+          content_type: string
+        - id: option-one-of::041da7c6-bf67-44c4-9367-aeb1defbeb12
+          name: default
+          type: 1
+          content: ''
+          content_type: string
+        url: wss://spark-api.xf-yun.com/v4.0/chat
+        domain: 4.0Ultra
+        appId: 680ab54f
+        maxTokens: 2048
+        temperature: 0.5
+        topK: 4
+        model: spark
+        llmId: 110
+        serviceId: bm4
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        questionErrMsg: ''
+        llmIdErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/SparkBot/test4/answer-new2.png
+      description: This node supports asking questions to the user, receiving user
+        responses, and outputting the reply content and extracted information
+      updatable: false
+  edges:
+  - source: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    target: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    type: customEdge
+    id: reactflow__edge-spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    target: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    type: customEdge
+    id: reactflow__edge-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023-node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    target: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    type: customEdge
+    id: reactflow__edge-spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    target: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    type: customEdge
+    id: reactflow__edge-spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43
+    target: question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4
+    type: customEdge
+    id: reactflow__edge-question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43-question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4
+    target: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    type: customEdge
+    id: reactflow__edge-question-answer::13d2be78-e0d3-4a5d-b207-c665894f3de4-question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    target: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    type: customEdge
+    id: reactflow__edge-question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56-spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    target: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    type: customEdge
+    id: reactflow__edge-question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56-spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56
+    target: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    type: customEdge
+    id: reactflow__edge-question-answer::54fa12a0-2eeb-48f2-b657-c42601279a56-spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    target: question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43
+    type: customEdge
+    id: reactflow__edge-node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783-question-answer::67a81138-3bfb-4d08-9b18-056ff19fab43
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve

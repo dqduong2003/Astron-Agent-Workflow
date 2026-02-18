@@ -1,0 +1,1801 @@
+flowMeta:
+  name: Stock Portfolio 2
+  description: An AI Agent That Monitors My Stock Portfolio 24/7
+  avatarIcon: https://oss-beijing-m8.openstorage.cn/SparkBotProd/icon/common/emojiitem_00_10@2x.png
+  avatarColor: '#FFEAD5'
+  advancedConfig: '{"prologue":{"enabled":true,"inputExample":["","",""],"prologueText":"Hello.
+    I am your Portfolio Monitor. Which stock ticker or company name should I analyze
+    for you today?"},"textToSpeech":{"enabled":true,"vcn_cn":"x5_lingxiaotang_flow","vcn_en":""}}'
+  dslVersion: v1
+flowData:
+  nodes:
+  - id: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    dragging: false
+    selected: false
+    width: 362
+    height: 82
+    position:
+      x: -2805.52478606003
+      y: 393.37586980802007
+    positionAbsolute:
+      x: -2805.52478606003
+      y: 393.37586980802007
+    type: custom
+    data:
+      allowInputReference: false
+      allowOutputReference: true
+      label: 开始
+      status: ''
+      nodeMeta:
+        aliasName: 开始节点
+        nodeType: 基础节点
+      inputs: [
+        ]
+      outputs:
+      - id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+        name: AGENT_USER_INPUT
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: 用户本轮对话输入内容
+        required: true
+        deleteDisabled: true
+      nodeParam:
+        setAnswerContentErrMsg: 输出中变量名校验不通过,自动生成JSON失败
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/start-node-icon.png
+      description: 工作流的开启节点，用于定义流程调用所需的业务变量信息。
+      updatable: false
+  - id: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    dragging: false
+    selected: false
+    width: 362
+    height: 122
+    position:
+      x: 2402.8165269146302
+      y: 574.5537389000847
+    positionAbsolute:
+      x: 2402.8165269146302
+      y: 574.5537389000847
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: 结束
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        aliasName: 结束节点
+        nodeType: 基础节点
+      inputs:
+      - id: 3e8a565f-43a3-492a-9ccc-a7d8d471652b
+        name: answer
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5228555a-ae6b-40f3-8e0c-4c47f1739767
+              nodeId: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+      outputs: [
+        ]
+      nodeParam:
+        template: '{{answer}}'
+        streamOutput: true
+        outputMode: 1
+        templateErrMsg: ''
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/end-node-icon.png
+      description: 工作流的结束节点，用于输出工作流运行后的最终结果。
+      updatable: false
+  - id: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 776.3518745737351
+      y: 1133.901644176324
+    positionAbsolute:
+      x: 776.3518745737351
+      y: 1133.901644176324
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Assessor
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: 4b5ece4b-fb96-4778-86b2-26976fa5e9cf
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+              nodeId: ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b
+              name: results
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: d2650598-b83d-474b-94cf-0b1a44e76656
+        name: risk_assess
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a Corporate Risk Management Specialist. Analyze the provided text for systemic or company-specific risks.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Risk Categories:**
+             - **Regulatory:** Antitrust, lawsuits, government bans.
+             - **Leadership:** CEO departure, scandal, insider selling.
+             - **Market:** Macro headwinds (inflation, rates) specifically mentioned in the text.
+          2. **Risk Levels:**
+             - **Low:** Standard market volatility.
+             - **Medium:** Watch-list items (e.g., pending investigation).
+             - **High:** Material threat to business model (e.g., major product recall, DOJ lawsuit).
+          3. **No Risk Found:** If the input text contains no negative risk information, output "Low" and "None identified." DO NOT hallucinate risks.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "identified_risks": ["String", "String"],
+            "risk_level": "String (Low/Medium/High)",
+            "risk_explanation": "String (Brief explanation of the primary threat)"
+          }
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 1764.418913049772
+      y: 831.8979410120246
+    positionAbsolute:
+      x: 1764.418913049772
+      y: 831.8979410120246
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Action Synthesizer
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: 2b5d392b-b909-40e5-88c5-77819048e5f9
+        name: sentiment
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5aeacdbc-4e9e-4089-8220-44461612598b
+              nodeId: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+              name: sentiment_analysis
+            contentErrMsg: ''
+        fileType: ''
+      - id: a6f7153a-e28b-44b7-ab20-e3d9d39dd2c6
+        name: risk
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: d2650598-b83d-474b-94cf-0b1a44e76656
+              nodeId: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+              name: risk_assess
+            contentErrMsg: ''
+        fileType: ''
+      - id: 59333268-3976-4ddc-bdd4-c40a82df231b
+        name: fundamental
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: e4da56fb-4d21-4b09-937d-e2b7a767ab34
+              nodeId: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+              name: fundamental_analysis
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 5228555a-ae6b-40f3-8e0c-4c47f1739767
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: |-
+          Sentiment analysis: {{sentiment}},
+          Fundamental Analysis: {{fundamental}},
+          Risk assessor: {{risk}}
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a Portfolio Manager. You will receive JSON inputs from the Sentiment Analyzer, Fundamental Analyst, and Risk Assessor.
+
+          **DECISION LOGIC:**
+          1. **Synthesize:** Combine the scores.
+             - **Strong Buy:** High Sentiment (>7) + High Fundamentals (>70) + Low Risk.
+             - **Hold:** Mixed signals (e.g., Great Fundamentals but High Risk).
+             - **Sell:** Low Fundamentals (<40) OR Critical Risk.
+          2. **Risk Override:** If Risk Level is "High," the recommendation CANNOT be "Buy," regardless of how good the sentiment is. It must be "Hold" or "Sell."
+          3. **Confidence:** Assign High/Medium/Low confidence based on data consistency across all three agents.
+
+          **OUTPUT FORMAT:**
+          Produce a clean, professional Markdown report. Do not output JSON. Use the following structure:
+
+          ## 📊 Portfolio Report: [Ticker]
+
+          | Metric | Status |
+          | :--- | :--- |
+          | **Sentiment** | [Score]/10 ([Label]) |
+          | **Fundamentals** | [Score]/100 |
+          | **Risk Level** | [Level] |
+
+          ### 💡 Recommendation: **[BUY / HOLD / SELL]**
+          **Reasoning:** [2-3 sentences explaining the decision based on the synthesis of the three inputs.]
+
+          ---
+          * **Key News:** [Insert Key Phrases/Summary]
+          * **Risk Alert:** [Insert Risk Explanation if Risk is Medium or High]
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 807.6263615955995
+      y: 613.8962232841917
+    positionAbsolute:
+      x: 807.6263615955995
+      y: 613.8962232841917
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Sentiment Analyzer
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: ad82931a-8192-4448-af6a-54d7375638fb
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+              nodeId: ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0
+              name: results
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 5aeacdbc-4e9e-4089-8220-44461612598b
+        name: sentiment_analysis
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        systemTemplate: |-
+          You are a Senior Financial Sentiment Analysis Expert. Analyze the provided news text for the given stock ticker.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Scoring Rubric (1-10):**
+             - 1-3: Bearish (Negative earnings, lawsuits, analyst downgrades).
+             - 4-6: Neutral (Standard updates, no major catalysts, mixed signals).
+             - 7-10: Bullish (Earnings beat, product breakthroughs, analyst upgrades).
+          2. **Context Weighting:** Give higher weight to concrete financial data (earnings, guidance) than to rumors or social media speculation.
+          3. **Urgency Definitions:**
+             - "Low": Routine news.
+             - "High": Market-moving event (e.g., CEO firing, earnings miss/beat).
+             - "Critical": Immediate trading halt or catastrophic risk.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "overall_sentiment_score": Number,
+            "sentiment_label": "String (Bullish/Bearish/Neutral)",
+            "key_phrases": ["String", "String"],
+            "urgency_flag": "String (Low/High/Critical)",
+            "reasoning_summary": "String (1 sentence explaining the score)"
+          }
+        llmIdErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        source: openai
+        extraParams:
+          temperature: 1
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: 821.2817773292347
+      y: 888.0081385910236
+    positionAbsolute:
+      x: 821.2817773292347
+      y: 888.0081385910236
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Analyst
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: c0c9d051-7039-4513-8cd3-e102f3ef8d91
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+              nodeId: ifly-code::cb548f17-4507-450a-b342-673594089f63
+              name: results
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: e4da56fb-4d21-4b09-937d-e2b7a767ab34
+        name: fundamental_analysis
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a CFA-level Fundamental Analysis Expert. Analyze the provided financial metrics.
+
+          **ANALYSIS GUIDELINES:**
+          1. **Evaluation Logic:**
+             - **P/E Ratio:** Evaluate relative to the tech/sector average (e.g., >50 is high unless growth is >20%).
+             - **Revenue:** Look for YoY growth. Negative growth is a critical red flag.
+             - **Margins:** Higher is better; shrinking margins indicate competitive pressure.
+          2. **Scoring (1-100):**
+             - <40: Distressed (Declining revenue, high debt).
+             - 40-70: Stable but slow growth.
+             - 71-100: Exceptional (High growth, strong margins, defensible moat).
+          3. **Missing Data:** If specific benchmarks are not provided in the input, use general knowledge of the S&P 500 or Sector standards as the baseline.
+
+          **OUTPUT FORMAT:**
+          Return ONLY valid JSON with no markdown formatting:
+          {
+            "ticker": "String",
+            "earnings_status": "String (Beat/Miss/Inline/Unknown)",
+            "pe_ratio": "String or Number",
+            "revenue_growth": "String",
+            "fundamental_score": Number,
+            "red_flags": ["String", "String"],
+            "strength_summary": "String (1 sentence on financial health)"
+          }
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+    dragging: false
+    selected: false
+    width: 362
+    height: 132
+    position:
+      x: -2277.260702750231
+      y: 368.4764713820232
+    positionAbsolute:
+      x: -2277.260702750231
+      y: 368.4764713820232
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Stock Name Extractor
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: Basic Node
+        aliasName: 大模型
+      inputs:
+      - id: 829b5793-546e-4ad7-8796-5ce863e97b45
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 0918514b-72a8-4646-8dd9-ff4a8fc26d44
+              nodeId: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+              name: AGENT_USER_INPUT
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+        name: chosen_stock
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        maxTokens: 2048
+        topK: 4
+        auditing: default
+        domain: gemini-3-flash-preview
+        template: '{{input}}'
+        model: spark
+        serviceId: gemini-3-flash-preview
+        respFormat: 0
+        llmId: 243013640
+        url: https://generativelanguage.googleapis.com/v1beta/openai/v1/chat/completions
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        enableChatHistoryV2:
+          isEnabled: false
+          rounds: 1
+        templateErrMsg: ''
+        modelId: 2
+        isThink: false
+        multiMode: false
+        modelName: Gemini 3 Flash
+        modelEnabled: true
+        llmIdErrMsg: ''
+        source: openai
+        extraParams:
+          temperature: 1
+        systemTemplate: |-
+          You are a Financial Entity Extractor. Your sole purpose is to identify stock tickers or company names from the user's input and convert them into a standardized format.
+
+          **EXECUTION RULES:**
+          1. **Identify & Convert:** specific company names into their official Stock Ticker Symbols (e.g., if input is "Apple", output "AAPL"; if "Google", output "GOOGL").
+          2. **Handle Lists:** If multiple stocks are mentioned, return them as a comma-separated list (e.g., "AAPL, MSFT, NVDA").
+          3. **Filter Noise:** Ignore all conversational filler (e.g., "I want to check," "tell me about," "how is").
+          4. **Unknowns:** If a company is private or the ticker is unknown, return the full company name in uppercase.
+
+          **FALLBACK:**
+          If no valid stock or company name is found in the text, return exactly: NULL
+
+          **EXAMPLES:**
+          * Input: "How is Tesla performing?" -> Output: TSLA
+          * Input: "Check Nvidia, Apple, and AMD" -> Output: NVDA, AAPL, AMD
+          * Input: "Hello, are you there?" -> Output: NULL
+
+          **FINAL OUTPUT INSTRUCTION:**
+          Return ONLY the ticker symbol(s) or NULL. Do not include markdown, explanations, or punctuation other than commas.
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/largeModelIcon.png
+      description: Based on the input prompt, the selected large language model will
+        be invoked to respond accordingly.
+      updatable: false
+  - id: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    dragging: false
+    selected: false
+    width: 362
+    height: 174
+    position:
+      x: -1683.3698018071643
+      y: 353.2058996023368
+    positionAbsolute:
+      x: -1683.3698018071643
+      y: 353.2058996023368
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: Check Stock Name
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 分支器
+        aliasName: 分支器
+      inputs:
+      - id: 2d68ee7c-c57a-42f8-b9c0-ba6c1c561c5f
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      - id: 1bc09080-2e59-43a8-8959-b53324a153f6
+        name: input1
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: literal
+            content: 'NULL'
+            contentErrMsg: ''
+      outputs: [
+        ]
+      nodeParam:
+        cases:
+        - id: branch_one_of::05e4ee1c-5e6a-4ad1-8257-bd3e5b200af2
+          level: 1
+          logicalOperator: and
+          conditions:
+          - id: ''
+            leftVarIndex: 2d68ee7c-c57a-42f8-b9c0-ba6c1c561c5f
+            rightVarIndex: 1bc09080-2e59-43a8-8959-b53324a153f6
+            compareOperator: is
+            compareOperatorErrMsg: ''
+        - id: branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603
+          level: 999
+          logicalOperator: and
+          conditions: [
+            ]
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/if-else-node-icon.png
+      description: Determine the branch path based on the defined conditions
+      updatable: false
+  - id: message::35add295-7db3-4802-9caf-9a476699ea5a
+    dragging: false
+    selected: true
+    width: 362
+    height: 148
+    position:
+      x: -792.172329459977
+      y: -126.31519157592311
+    positionAbsolute:
+      x: -792.172329459977
+      y: -126.31519157592311
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: Error Message
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 消息
+      inputs:
+      - id: ae3c0733-aff5-4e89-8851-3cb295dbac8e
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: c450ee8b-8aeb-43df-addf-3998bec9eafb
+        name: output_m
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        template: I couldn't identify a specific stock name or ticker in your request.
+          Could you please type just the company name or ticker symbol (e.g., 'Apple'
+          or 'AAPL')?
+        startFrameEnabled: false
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        templateErrMsg: ''
+        streamOutput: true
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/message-node-icon.png
+      description: Used to output intermediate results during workflow execution
+      updatable: false
+  - id: text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -715.8217804070966
+      y: 616.8508303872393
+    positionAbsolute:
+      x: -715.8217804070966
+      y: 616.8508303872393
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: News Search Query
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 文本拼接
+      inputs:
+      - id: e95cee59-3f89-4c28-a2c0-b8718af97088
+        name: stock_name
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        prompt: latest {{stock_name}} headlines Bloomberg CNBC Reddit sentiment
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        separatorErrMsg: ''
+        mode: 0
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/text-splicing-icon.png
+      description: Used to process multiple string variables according to specified
+        formatting rules
+      updatable: false
+  - id: ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: 309.47545718895924
+      y: 604.8786858277559
+    positionAbsolute:
+      x: 309.47545718895924
+      y: 604.8786858277559
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: News Scraper
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 代码
+      inputs:
+      - id: 0d3bd259-3553-4638-b3a1-a7d6e7dbb93f
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: array-object
+          value:
+            type: ref
+            content:
+              id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+              nodeId: plugin::b5cf9764-524f-434d-bc56-6438f9789821
+              name: organic
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+        name: results
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        code: "import json\nimport requests\n\ndef main(input):\n    # 1. Parse Input\
+          \ safely\n    try:\n        # If input is a string (JSON), parse it. If\
+          \ it's already a list/dict, use it directly.\n        if isinstance(input,\
+          \ str):\n            data = json.loads(input)\n        else:\n         \
+          \   data = input\n            \n    except Exception as e:\n        return\
+          \ f\"Error parsing input: {str(e)}\"\n\n    # 2. Extract URLs\n    top_urls\
+          \ = [item.get('link') for item in data[:3] if item.get('link')]\n    print(top_urls)\n\
+          \    \n    output_text = f\"*** SUMMARY OF {len(top_urls)} ARTICLES ***\\\
+          n\\n\"\n\n    # 3. Scrape using Jina AI\n    \n    for url in top_urls:\n\
+          \        try:\n            output_text += f\"--- SOURCE: {url} ---\\n\"\n\
+          \            jina_url = f\"https://r.jina.ai/{url}\"\n            headers\
+          \ = {\n                \"Authorization\": \"Bearer jina_402d83aece3b4017838964ed472b608d6DEDmmOaJjN9USk-wk1zYz_t14Nc\"\
+          ,\n                \"X-Retain-Images\": \"none\"\n            }\n      \
+          \      resp = requests.get(jina_url, headers=headers, timeout=30)\n    \
+          \        \n            if resp.status_code == 200:\n                markdown_text\
+          \ = resp.text\n                output_text += markdown_text[:4000] + \"\\\
+          n\\n\" + (\"-\" * 30) + \"\\n\\n\"\n            else:\n                output_text\
+          \ += f\"[Error: Jina could not fetch this page. Status: {resp.status_code}]\\\
+          n\\n\"\n                \n        except Exception as e:\n            output_text\
+          \ += f\"[Failed to read: {str(e)}]\\n\\n\"\n\n    return output_text"
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        codeErrMsg: ''
+        exceptionHandlingEdge: fail_one_of::34a8ecbb-5baf-48d7-8263-f39796ebf675
+        handlingEdge: normal_one_of::e9af41c6-7bc0-4aec-bdba-2ff75f20cabd
+      retryConfig:
+        shouldRetry: true
+        timeout: 30
+        maxRetries: 1
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/codeIcon.png
+      description: Provides code development capability for developers, currently
+        only supports Python language. Allows parameters to be passed in using defined
+        variables, and the return statement is used to output the result of the function.
+      updatable: false
+  - id: plugin::b5cf9764-524f-434d-bc56-6438f9789821
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -164.01295385481058
+      y: 615.5228253580065
+    positionAbsolute:
+      x: -164.01295385481058
+      y: 615.5228253580065
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: News Search
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 工具
+      inputs:
+      - id: ab1b5144-54fb-42c0-907e-87422e5afcc5
+        name: X-API-KEY
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              name: ''
+              nodeId: ''
+            contentErrMsg: ''
+        description: API KEY
+        required: false
+        disabled: false
+      - id: 05cd60ed-9a9e-49f6-b4dd-ffb961751b1b
+        name: q
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+              nodeId: text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+        description: The search query (e.g. "Apple stock news")
+        required: true
+        disabled: false
+      outputs:
+      - id: 2749d2a1-0f71-4bf0-b0fa-80e39eac9253
+        name: searchParameters
+        schema:
+          type: object
+          properties: [
+            ]
+      - id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+        name: organic
+        schema:
+          type: array-object
+          properties: [
+            ]
+      nodeParam:
+        appId: 680ab54f
+        code: ''
+        pluginId: tool@966702628021000
+        operationId: Google Search-5hsNl7yB
+        toolDescription: Search the internet for real-time information, news, and
+          data.
+        version: V7.0
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        businessInput: [
+          ]
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/tool-icon.png
+      updatable: false
+      isLatest: true
+  - id: message::712495b1-b933-432a-9075-45670ec1c8f5
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -1207.9693419204154
+      y: 605.5017239106966
+    positionAbsolute:
+      x: -1207.9693419204154
+      y: 605.5017239106966
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: News Message
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 消息
+      inputs:
+      - id: 6b562fd1-e8bf-4200-b0db-8e8dd141a5ea
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: af06abf0-dfc1-48f7-863e-7d6436722093
+        name: output_m
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        template: Gathering News for {{input}}...
+        startFrameEnabled: false
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        templateErrMsg: ''
+        streamOutput: true
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/message-node-icon.png
+      description: Used to output intermediate results during workflow execution
+      updatable: false
+  - id: message::94f25be3-cb58-4c12-8d9c-f9dce54b859b
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -1177.0769153028791
+      y: 874.9383244058338
+    positionAbsolute:
+      x: -1177.0769153028791
+      y: 874.9383244058338
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: Fundamental Message
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 消息
+      inputs:
+      - id: 6b562fd1-e8bf-4200-b0db-8e8dd141a5ea
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: af06abf0-dfc1-48f7-863e-7d6436722093
+        name: output_m
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        template: Gathering Financial Analysis for {{input}}...
+        startFrameEnabled: false
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        templateErrMsg: ''
+        streamOutput: true
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/message-node-icon.png
+      description: Used to output intermediate results during workflow execution
+      updatable: false
+  - id: message::b8f94f57-3b5f-4919-bf19-a7f6dab8c1c6
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -1161.1463958167376
+      y: 1122.9644786521021
+    positionAbsolute:
+      x: -1161.1463958167376
+      y: 1122.9644786521021
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: Risk Message
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 消息
+      inputs:
+      - id: 6b562fd1-e8bf-4200-b0db-8e8dd141a5ea
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: af06abf0-dfc1-48f7-863e-7d6436722093
+        name: output_m
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        template: Gathering Potential Risks for {{input}}...
+        startFrameEnabled: false
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        templateErrMsg: ''
+        streamOutput: true
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/message-node-icon.png
+      description: Used to output intermediate results during workflow execution
+      updatable: false
+  - id: plugin::7799645a-7df7-44d4-a9d3-499a5444dabd
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -173.39080983959076
+      y: 891.4885550778644
+    positionAbsolute:
+      x: -173.39080983959076
+      y: 891.4885550778644
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Search
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 工具
+      inputs:
+      - id: ab1b5144-54fb-42c0-907e-87422e5afcc5
+        name: X-API-KEY
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              name: ''
+              nodeId: ''
+            contentErrMsg: ''
+        required: false
+      - id: 05cd60ed-9a9e-49f6-b4dd-ffb961751b1b
+        name: q
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+              nodeId: text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+        required: true
+      outputs:
+      - id: 2749d2a1-0f71-4bf0-b0fa-80e39eac9253
+        name: searchParameters
+        schema:
+          type: object
+          properties: [
+            ]
+      - id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+        name: organic
+        schema:
+          type: array-object
+          properties: [
+            ]
+      nodeParam:
+        appId: 680ab54f
+        code: ''
+        pluginId: tool@966702628021000
+        operationId: Google Search-5hsNl7yB
+        toolDescription: Search the internet for real-time information, news, and
+          data.
+        version: V7.0
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        businessInput: [
+          ]
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/tool-icon.png
+      updatable: false
+      isLatest: true
+  - id: plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -166.7932702857263
+      y: 1143.8444430131804
+    positionAbsolute:
+      x: -166.7932702857263
+      y: 1143.8444430131804
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Search
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 工具
+      inputs:
+      - id: ab1b5144-54fb-42c0-907e-87422e5afcc5
+        name: X-API-KEY
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              name: ''
+              nodeId: ''
+            contentErrMsg: ''
+        required: false
+      - id: 05cd60ed-9a9e-49f6-b4dd-ffb961751b1b
+        name: q
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+              nodeId: text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481
+              name: output
+            contentErrMsg: ''
+        fileType: ''
+        required: true
+      outputs:
+      - id: 2749d2a1-0f71-4bf0-b0fa-80e39eac9253
+        name: searchParameters
+        schema:
+          type: object
+          properties: [
+            ]
+      - id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+        name: organic
+        schema:
+          type: array-object
+          properties: [
+            ]
+      nodeParam:
+        appId: 680ab54f
+        code: ''
+        pluginId: tool@966702628021000
+        operationId: Google Search-5hsNl7yB
+        toolDescription: Search the internet for real-time information, news, and
+          data.
+        version: V7.0
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        businessInput: [
+          ]
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/tool-icon.png
+      updatable: false
+      isLatest: true
+  - id: ifly-code::cb548f17-4507-450a-b342-673594089f63
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: 277.00621276565346
+      y: 882.49380043608
+    positionAbsolute:
+      x: 277.00621276565346
+      y: 882.49380043608
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Scraper
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 代码
+      inputs:
+      - id: 0d3bd259-3553-4638-b3a1-a7d6e7dbb93f
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: array-object
+          value:
+            type: ref
+            content:
+              id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+              nodeId: plugin::7799645a-7df7-44d4-a9d3-499a5444dabd
+              name: organic
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+        name: results
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        code: "import json\nimport requests\n\ndef main(input):\n    # 1. Parse Input\
+          \ safely\n    try:\n        # If input is a string (JSON), parse it. If\
+          \ it's already a list/dict, use it directly.\n        if isinstance(input,\
+          \ str):\n            data = json.loads(input)\n        else:\n         \
+          \   data = input\n            \n    except Exception as e:\n        return\
+          \ f\"Error parsing input: {str(e)}\"\n\n    # 2. Extract URLs\n    top_urls\
+          \ = [item.get('link') for item in data[:3] if item.get('link')]\n    print(top_urls)\n\
+          \    \n    output_text = f\"*** SUMMARY OF {len(top_urls)} ARTICLES ***\\\
+          n\\n\"\n\n    # 3. Scrape using Jina AI\n    \n    for url in top_urls:\n\
+          \        try:\n            output_text += f\"--- SOURCE: {url} ---\\n\"\n\
+          \            jina_url = f\"https://r.jina.ai/{url}\"\n            headers\
+          \ = {\n                \"Authorization\": \"Bearer jina_402d83aece3b4017838964ed472b608d6DEDmmOaJjN9USk-wk1zYz_t14Nc\"\
+          ,\n                \"X-Retain-Images\": \"none\"\n            }\n      \
+          \      resp = requests.get(jina_url, headers=headers, timeout=30)\n    \
+          \        \n            if resp.status_code == 200:\n                markdown_text\
+          \ = resp.text\n                output_text += markdown_text[:4000] + \"\\\
+          n\\n\" + (\"-\" * 30) + \"\\n\\n\"\n            else:\n                output_text\
+          \ += f\"[Error: Jina could not fetch this page. Status: {resp.status_code}]\\\
+          n\\n\"\n                \n        except Exception as e:\n            output_text\
+          \ += f\"[Failed to read: {str(e)}]\\n\\n\"\n\n    return output_text"
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        codeErrMsg: ''
+        exceptionHandlingEdge: fail_one_of::404905ba-546a-4c2d-aae1-7bf7f158d9ca
+        handlingEdge: normal_one_of::103e1fea-df31-4819-bb8e-4d6faf95ece1
+      retryConfig:
+        shouldRetry: true
+        timeout: 30
+        maxRetries: 1
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/codeIcon.png
+      description: Provides code development capability for developers, currently
+        only supports Python language. Allows parameters to be passed in using defined
+        variables, and the return statement is used to output the result of the function.
+      updatable: false
+  - id: ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: 284.12220566553447
+      y: 1140.3162963828108
+    positionAbsolute:
+      x: 284.12220566553447
+      y: 1140.3162963828108
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Scraper
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 代码
+      inputs:
+      - id: 0d3bd259-3553-4638-b3a1-a7d6e7dbb93f
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: array-object
+          value:
+            type: ref
+            content:
+              id: 89aa8729-87af-40be-88ae-ae4bc7ed902d
+              nodeId: plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99
+              name: organic
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: c6523bd0-b3f6-44a9-8be2-92dbd3ccd0ad
+        name: results
+        nameErrMsg: ''
+        schema:
+          type: string
+          default: ''
+      nodeParam:
+        code: "import json\nimport requests\n\ndef main(input):\n    # 1. Parse Input\
+          \ safely\n    try:\n        # If input is a string (JSON), parse it. If\
+          \ it's already a list/dict, use it directly.\n        if isinstance(input,\
+          \ str):\n            data = json.loads(input)\n        else:\n         \
+          \   data = input\n            \n    except Exception as e:\n        return\
+          \ f\"Error parsing input: {str(e)}\"\n\n    # 2. Extract URLs\n    top_urls\
+          \ = [item.get('link') for item in data[:3] if item.get('link')]\n    print(top_urls)\n\
+          \    \n    output_text = f\"*** SUMMARY OF {len(top_urls)} ARTICLES ***\\\
+          n\\n\"\n\n    # 3. Scrape using Jina AI\n    \n    for url in top_urls:\n\
+          \        try:\n            output_text += f\"--- SOURCE: {url} ---\\n\"\n\
+          \            jina_url = f\"https://r.jina.ai/{url}\"\n            headers\
+          \ = {\n                \"Authorization\": \"Bearer jina_402d83aece3b4017838964ed472b608d6DEDmmOaJjN9USk-wk1zYz_t14Nc\"\
+          ,\n                \"X-Retain-Images\": \"none\"\n            }\n      \
+          \      resp = requests.get(jina_url, headers=headers, timeout=30)\n    \
+          \        \n            if resp.status_code == 200:\n                markdown_text\
+          \ = resp.text\n                output_text += markdown_text[:4000] + \"\\\
+          n\\n\" + (\"-\" * 30) + \"\\n\\n\"\n            else:\n                output_text\
+          \ += f\"[Error: Jina could not fetch this page. Status: {resp.status_code}]\\\
+          n\\n\"\n                \n        except Exception as e:\n            output_text\
+          \ += f\"[Failed to read: {str(e)}]\\n\\n\"\n\n    return output_text"
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        codeErrMsg: ''
+        exceptionHandlingEdge: fail_one_of::72243521-5450-46ae-a6ed-2c742464ae85
+        handlingEdge: normal_one_of::0f4579c6-4a34-4e81-98bb-cbdf6b7c1fb2
+      retryConfig:
+        shouldRetry: true
+        timeout: 30
+        maxRetries: 1
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/codeIcon.png
+      description: Provides code development capability for developers, currently
+        only supports Python language. Allows parameters to be passed in using defined
+        variables, and the return statement is used to output the result of the function.
+      updatable: false
+  - id: text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -696.1361117373045
+      y: 871.4725668661429
+    positionAbsolute:
+      x: -696.1361117373045
+      y: 871.4725668661429
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Fundamental Analyst Query
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 文本拼接
+      inputs:
+      - id: e95cee59-3f89-4c28-a2c0-b8718af97088
+        name: stock_name
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        prompt: '{{stock_name}} stock financial analysis P/E ratio revenue growth
+          YoY earnings beat miss debt'
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        separatorErrMsg: ''
+        mode: 0
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/text-splicing-icon.png
+      description: Used to process multiple string variables according to specified
+        formatting rules
+      updatable: false
+  - id: text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: -670.7665059430984
+      y: 1137.4621775938745
+    positionAbsolute:
+      x: -670.7665059430984
+      y: 1137.4621775938745
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: true
+      label: Risk Search Query
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 工具
+        aliasName: 文本拼接
+      inputs:
+      - id: e95cee59-3f89-4c28-a2c0-b8718af97088
+        name: stock_name
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 9d1e43be-fbef-48c8-b528-fead3aab0b0d
+              nodeId: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+              name: chosen_stock
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 23ed4b6f-ba25-43e8-89b0-41c9681d77a1
+        name: output
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        prompt: '{{stock_name}} stock regulatory investigation antitrust lawsuits
+          CEO controversy supply chain risks'
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        separatorErrMsg: ''
+        mode: 0
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/text-splicing-icon.png
+      description: Used to process multiple string variables according to specified
+        formatting rules
+      updatable: false
+  - id: message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    dragging: false
+    selected: false
+    width: 362
+    height: 108
+    position:
+      x: 1333.4329207141584
+      y: 835.8010643653006
+    positionAbsolute:
+      x: 1333.4329207141584
+      y: 835.8010643653006
+    type: custom
+    data:
+      allowInputReference: true
+      allowOutputReference: false
+      label: Message_1
+      labelEdit: false
+      references: [
+        ]
+      status: ''
+      nodeMeta:
+        nodeType: 基础节点
+        aliasName: 消息
+      inputs:
+      - id: 92e93e98-1ec9-4826-96e5-5fe1500f62cb
+        name: input
+        nameErrMsg: ''
+        schema:
+          type: string
+          value:
+            type: ref
+            content:
+              id: 5aeacdbc-4e9e-4089-8220-44461612598b
+              nodeId: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+              name: sentiment_analysis
+            contentErrMsg: ''
+        fileType: ''
+      outputs:
+      - id: 2726fbea-3386-4e18-80cf-5f2c4c6d510c
+        name: output_m
+        nameErrMsg: ''
+        schema:
+          type: string
+      nodeParam:
+        template: Generating Report...
+        startFrameEnabled: false
+        appId: 680ab54f
+        uid: 1edf3a21-3bf6-4240-b2cb-a831a738ffdd
+        templateErrMsg: ''
+        streamOutput: true
+      icon: https://oss-beijing-m8.openstorage.cn/pro-bucket/sparkBot/common/workflow/icon/message-node-icon.png
+      description: Used to output intermediate results during workflow execution
+      updatable: false
+  edges:
+  - source: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    target: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    type: customEdge
+    id: reactflow__edge-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023-node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+    target: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    type: customEdge
+    id: reactflow__edge-spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7-if-else::3b396022-8583-4e34-a915-79fda892afc8
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    sourceHandle: branch_one_of::05e4ee1c-5e6a-4ad1-8257-bd3e5b200af2
+    target: message::35add295-7db3-4802-9caf-9a476699ea5a
+    type: customEdge
+    id: reactflow__edge-if-else::3b396022-8583-4e34-a915-79fda892afc8branch_one_of::05e4ee1c-5e6a-4ad1-8257-bd3e5b200af2-message::35add295-7db3-4802-9caf-9a476699ea5a
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: message::35add295-7db3-4802-9caf-9a476699ea5a
+    target: node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    type: customEdge
+    id: reactflow__edge-message::35add295-7db3-4802-9caf-9a476699ea5a-node-end::cda617af-551e-462e-b3b8-3bb9a041bf88
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: plugin::b5cf9764-524f-434d-bc56-6438f9789821
+    target: ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0
+    type: customEdge
+    id: reactflow__edge-plugin::b5cf9764-524f-434d-bc56-6438f9789821-ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0
+    sourceHandle: normal_one_of::0f4579c6-4a34-4e81-98bb-cbdf6b7c1fb2
+    target: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    type: customEdge
+    id: reactflow__edge-ifly-code::6df66e53-6150-4776-aa84-9b380ded9cb0normal_one_of::0f4579c6-4a34-4e81-98bb-cbdf6b7c1fb2-spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: plugin::7799645a-7df7-44d4-a9d3-499a5444dabd
+    target: ifly-code::cb548f17-4507-450a-b342-673594089f63
+    type: customEdge
+    id: reactflow__edge-plugin::7799645a-7df7-44d4-a9d3-499a5444dabd-ifly-code::cb548f17-4507-450a-b342-673594089f63
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: ifly-code::cb548f17-4507-450a-b342-673594089f63
+    target: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    type: customEdge
+    id: reactflow__edge-ifly-code::cb548f17-4507-450a-b342-673594089f63-spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99
+    target: ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b
+    type: customEdge
+    id: reactflow__edge-plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99-ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b
+    target: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    type: customEdge
+    id: reactflow__edge-ifly-code::7e8bc2b8-6bb2-40d8-b29a-dfb1f5a3326b-spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    sourceHandle: branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603
+    target: message::712495b1-b933-432a-9075-45670ec1c8f5
+    type: customEdge
+    id: reactflow__edge-if-else::3b396022-8583-4e34-a915-79fda892afc8branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603-message::712495b1-b933-432a-9075-45670ec1c8f5
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    sourceHandle: branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603
+    target: message::94f25be3-cb58-4c12-8d9c-f9dce54b859b
+    type: customEdge
+    id: reactflow__edge-if-else::3b396022-8583-4e34-a915-79fda892afc8branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603-message::94f25be3-cb58-4c12-8d9c-f9dce54b859b
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: if-else::3b396022-8583-4e34-a915-79fda892afc8
+    sourceHandle: branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603
+    target: message::b8f94f57-3b5f-4919-bf19-a7f6dab8c1c6
+    type: customEdge
+    id: reactflow__edge-if-else::3b396022-8583-4e34-a915-79fda892afc8branch_one_of::90f32ec5-6165-4a55-96a8-396e948c7603-message::b8f94f57-3b5f-4919-bf19-a7f6dab8c1c6
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: message::712495b1-b933-432a-9075-45670ec1c8f5
+    target: text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad
+    type: customEdge
+    id: reactflow__edge-message::712495b1-b933-432a-9075-45670ec1c8f5-text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad
+    target: plugin::b5cf9764-524f-434d-bc56-6438f9789821
+    type: customEdge
+    id: reactflow__edge-text-joiner::126f0403-84d6-45a5-a68e-b1b882165bad-plugin::b5cf9764-524f-434d-bc56-6438f9789821
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: message::94f25be3-cb58-4c12-8d9c-f9dce54b859b
+    target: text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4
+    type: customEdge
+    id: reactflow__edge-message::94f25be3-cb58-4c12-8d9c-f9dce54b859b-text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4
+    target: plugin::7799645a-7df7-44d4-a9d3-499a5444dabd
+    type: customEdge
+    id: reactflow__edge-text-joiner::1f158f13-b8f6-4f9d-8ad2-ae6829a09cd4-plugin::7799645a-7df7-44d4-a9d3-499a5444dabd
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: message::b8f94f57-3b5f-4919-bf19-a7f6dab8c1c6
+    target: text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481
+    type: customEdge
+    id: reactflow__edge-message::b8f94f57-3b5f-4919-bf19-a7f6dab8c1c6-text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481
+    target: plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99
+    type: customEdge
+    id: reactflow__edge-text-joiner::fc5d7e04-e92f-4bec-972d-f198004ab481-plugin::c1bb6ca8-24f8-4847-bc07-42ad369fdd99
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c
+    target: message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    type: customEdge
+    id: reactflow__edge-spark-llm::f1211b4e-a40b-4ad1-b0a6-d9c2ef34985c-message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f
+    target: message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    type: customEdge
+    id: reactflow__edge-spark-llm::c510820b-bda1-449f-9fb6-563b8c11078f-message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be
+    target: message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    type: customEdge
+    id: reactflow__edge-spark-llm::e7184a91-eb50-47df-98ba-6636fb26f3be-message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de
+    target: spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    type: customEdge
+    id: reactflow__edge-message::fc371a6c-b1d6-4d1b-b422-8c2083acb3de-spark-llm::e3281c9c-67a9-4e9f-9ddf-02c99a1d8023
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
+  - source: node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783
+    target: spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+    type: customEdge
+    id: reactflow__edge-node-start::d61b0f71-87ee-475e-93ba-f1607f0ce783-spark-llm::c4ff5b48-2e9a-483c-8f91-abbc39e6b8c7
+    markerEnd:
+      type: arrow
+      color: '#6356EA'
+    data:
+      edgeType: curve
